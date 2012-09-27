@@ -70,25 +70,36 @@ import org.eclipse.jetty.plus.webapp.{EnvConfiguration, PlusConfiguration}
 		} toSeq
 	}
 
-	def sharedSettings = sonatypeSettings ++ Seq(
+	def sharedSettings: Seq[Setting[_]] = Seq(
 		projectID <<= (organization,moduleName,version,artifacts,crossPaths){ (org,module,version,as,crossEnabled) =>
 			ModuleID(org, module, version).cross(crossEnabled).artifacts(as : _*)
 		},
 		organization := "com.github.siasia",
-		credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
-		pomUrl := "http://github.com/siasia/xsbt-web-plugin",
+		pomUrl := "http://github.com/mDialog/xsbt-web-plugin",
+		credentials += Credentials(Path.userHome / ".mdialog.credentials"),
+		publishTo <<= version { (v: String) =>
+		  if (v.trim.endsWith("-SNAPSHOT"))
+		    Some("snapshots" at "http://artifactory.mdialog.com/artifactory/snapshots")
+		  else
+		    Some("releases" at "http://artifactory.mdialog.com/artifactory/releases")
+		},
 		licenses := Seq(
-			"BSD 3-Clause" -> new URL("https://github.com/siasia/xsbt-web-plugin/blob/master/LICENSE")
+			"BSD 3-Clause" -> new URL("https://github.com/mDialog/xsbt-web-plugin/blob/master/LICENSE")
 		),
 		scm := (
-			"scm:git:git@github.com:siasia/xsbt-web-plugin.git",
-			"scm:git:git@github.com:siasia/xsbt-web-plugin.git",
-			"git@github.com:siasia/xsbt-web-plugin.git"
+			"scm:git:git@github.com:mDialog/xsbt-web-plugin.git",
+			"scm:git:git@github.com:mDialog/xsbt-web-plugin.git",
+			"git@github.com:mDialog/xsbt-web-plugin.git"
 		),
 		developers := Seq((
 			"siasia",
 			"Artyom Olshevskiy",
 			"siasiamail@gmail.com"
+		),
+		(
+			"davidharcombe",
+			"David Harcombe",
+			"david.harcombe@gmail.com"
 		))		
 	)
 
